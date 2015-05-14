@@ -146,7 +146,7 @@
           return options.data.color !== undefined ? options.data.color(d.item) : fnColor(d.item.text);
         })
         .attr("opacity", "0.8") .on('mouseover', function(d){
-             var temaplate = "<strong>" + d.item.office + "</strong> - <span style='color:red'>" + d.item.volume + "</span>";
+             var temaplate = "<strong>" + d.item.office + "</strong> - <span style='color:red'>" + numeral(d.item.volume).format('0,0') + "</span>";
               tooltip.transition().duration(200).style("opacity", .9);
               tooltip.html(temaplate)
                   .style("left", (d3.event.pageX) + "px")
