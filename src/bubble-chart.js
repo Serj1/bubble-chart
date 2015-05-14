@@ -135,13 +135,16 @@
                     return "<strong>" + d.item.office + "</strong> - <span style='color:red'>" + d.item.volume + "</span>";
                 });
 
-            node.call(tip);
+           
       var node = self.svg.selectAll(".node")
         .data(self.circlePositions)
         .enter().append("g")
         .attr("class", function (d) {return ["node", options.data.classed(d.item)].join(" ");});
-
+  
       var fnColor = d3.scale.category20();
+      
+      node.call(tip);
+      
       node.append("circle")
         .attr({r: function (d) {return d.r;}, cx: function (d) {return d.cx;}, cy: function (d) {return d.cy;}})
         .style("fill", function (d) {
