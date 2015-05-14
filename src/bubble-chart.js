@@ -74,7 +74,8 @@
       var options = self.options;
       while (circles.length < self.items.length && ++interval < self.intervalMax) {
         var val = self.values[circles.length];
-        var rad = Math.max((val * options.radiusMax) / self.valueMax, options.radiusMin);
+       //var rad = Math.max((val * options.radiusMax) / self.valueMax, options.radiusMin);
+        var rad = (val * options.radiusMax) / self.valueMax;
         var dist = self.innerRadius + rad + Math.random() * (self.outerRadius - self.innerRadius - rad * 2);
         var angle = Math.random() * pi2;
         var cx = self.centralPoint + dist * Math.cos(angle);
@@ -128,6 +129,13 @@
         .attr("viewBox", function (d) {return ["0 0", options.viewBoxSize, options.viewBoxSize].join(" ")});
       self.circlePositions = self.randomCirclesPositions(options.intersectDelta);
 
+        var tip = d3.tip()
+                .attr('class', 'd3-tip')
+                .html(function (d) {
+                    return "<strong>" + d.item.office + "</strong> - <span style='color:red'>" + d.item.volume + "</span>";
+                });
+
+            node.call(tip);
       var node = self.svg.selectAll(".node")
         .data(self.circlePositions)
         .enter().append("g")
@@ -139,7 +147,10 @@
         .style("fill", function (d) {
           return options.data.color !== undefined ? options.data.color(d.item) : fnColor(d.item.text);
         })
-        .attr("opacity", "0.8");
+        .attr("opacity", "0.8")
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide);
+        
       node.sort(function (a, b) {return options.data.eval(b.item) - options.data.eval(a.item);});
 
       self.transition = {};
