@@ -129,12 +129,9 @@
         .attr("viewBox", function (d) {return ["0 0", options.viewBoxSize, options.viewBoxSize].join(" ")});
       self.circlePositions = self.randomCirclesPositions(options.intersectDelta);
 
-        var tip = d3.tip()
-                .attr('class', 'd3-tip')
-                .html(function (d) {
-                    return "<strong>" + d.item.office + "</strong> - <span style='color:red'>" + d.item.volume + "</span>";
-                });
-
+     var tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
            
       var node = self.svg.selectAll(".node")
         .data(self.circlePositions)
@@ -143,16 +140,21 @@
   
       var fnColor = d3.scale.category20();
       
-      node.call(tip);
-      
       node.append("circle")
         .attr({r: function (d) {return d.r;}, cx: function (d) {return d.cx;}, cy: function (d) {return d.cy;}})
         .style("fill", function (d) {
           return options.data.color !== undefined ? options.data.color(d.item) : fnColor(d.item.text);
         })
-        .attr("opacity", "0.8")
-        .on('mouseover', tip.show)
-        .on('mouseout', tip.hide);
+        .attr("opacity", "0.8") .on('mouseover', function(d){
+             var temaplate = "<strong>" + d.item.office + "</strong> - <span style='color:red'>" + d.item.volume + "</span>";
+              tooltip.transition().duration(200).style("opacity", .9);
+              tooltip.html(temaplate)
+                  .style("left", (d3.event.pageX) + "px")
+                  .style("top", (d3.event.pageY - 28) + "px");
+          })
+        .on('mouseout', function(d){
+              tooltip.transition().duration(500).style("opacity", 0);
+          });
         
       node.sort(function (a, b) {return options.data.eval(b.item) - options.data.eval(a.item);});
 
